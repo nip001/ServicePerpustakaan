@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +30,6 @@ public class BukuController {
 
 	@GetMapping("/{title}")
 	public List<Buku> getAllByJudulBuku(@PathVariable String title) {
-		System.out.println(title);
 		return bukuRepo.findByJudulBuku(title);
 	}
 
@@ -36,5 +38,17 @@ public class BukuController {
 		bukuRepo.save(buku);
 		return "Insert Berhasil";
 	}
-
+	
+	@DeleteMapping("/deleteBuku/{id}")
+	public String deleteBuku(@PathVariable String id) {
+		bukuRepo.deleteById(Long.parseLong(id));
+		return "Delete Berhasil";
+	}
+	
+	@PutMapping("/updateBuku/{id}")
+	public String updateBuku(@PathVariable String id, @RequestBody Buku buku) {
+		buku.setId(Long.parseLong(id));
+		bukuRepo.save(buku);
+		return "Update Berhasil";
+	}
 }
