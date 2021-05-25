@@ -19,4 +19,7 @@ public interface DataUserRepository extends JpaRepository<DataUser, Long>{
 			+ "WHEN 'email'=:type THEN email LIKE %:value% "
 			+ "END)",nativeQuery=true)
 	List<DataUser> findBySearchBy(@Param("type")String type,@Param("value")String value);
+
+	@Query(value="SELECT * from user where name=?1 and phone=?2",nativeQuery = true)
+	DataUser findByLogin(String name, String phone);
 }

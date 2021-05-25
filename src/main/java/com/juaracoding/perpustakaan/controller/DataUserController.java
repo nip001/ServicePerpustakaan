@@ -27,6 +27,12 @@ public class DataUserController {
 		return dataRepo.findAll();
 	}
 
+	@GetMapping("/login/")
+	public DataUser loginUser(@RequestParam("name")String name, @RequestParam("phone") String phone) {
+		return dataRepo.findByLogin(name, phone);
+	}
+
+
 	@GetMapping("/searchby/{type}/{value}")
 	public List<DataUser> getSearchBy(@PathVariable("type")String type, @PathVariable("value") String value) {
 		return dataRepo.findBySearchBy(type, value);
