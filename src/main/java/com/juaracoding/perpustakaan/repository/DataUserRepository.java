@@ -22,4 +22,6 @@ public interface DataUserRepository extends JpaRepository<DataUser, Long>{
 
 	@Query(value="SELECT * from user where name=?1 and phone=?2",nativeQuery = true)
 	DataUser findByLogin(String name, String phone);
+	
+	DataUser findByName(String name); 
 }

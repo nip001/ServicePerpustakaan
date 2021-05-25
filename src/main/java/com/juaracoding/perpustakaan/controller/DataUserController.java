@@ -38,6 +38,11 @@ public class DataUserController {
 		return dataRepo.findBySearchBy(type, value);
 	}
 
+	@GetMapping("/name/{value}")
+	public DataUser getByName(@PathVariable("value") String value) {
+		return dataRepo.findByName(value);
+	}
+
 	@PostMapping("/register/")
 	public String addUser(@RequestBody DataUser user) {
 		dataRepo.save(user);
