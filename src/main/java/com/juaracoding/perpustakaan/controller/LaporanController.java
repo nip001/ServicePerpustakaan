@@ -1,6 +1,7 @@
 package com.juaracoding.perpustakaan.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.tomcat.util.json.JSONParser;
@@ -32,15 +33,23 @@ public class LaporanController {
 		return laporanRepo.findAll();
 	}
 	
+	@SuppressWarnings("deprecation")
 	@PostMapping("/")
 	public String addLaporan (@RequestParam(value="file")MultipartFile images, @ModelAttribute(value="data") String dataJson) throws IOException {
 		String fileName = StringUtils.cleanPath(images.getOriginalFilename());
 		
 		String uploadDir = "user-photo/";
 		FileUtility.saveFile(uploadDir, fileName, images);
-		GsonJsonParser data = new GsonJsonParser();
 		Laporan lapor = new Gson().fromJson(dataJson, Laporan.class);
+		
+		if(lapor.getKejadian().equalsIgnoreCase("bencana")) {
+			lapor.setStatus("bencana");
+		}else {
+			lapor.setStatus("kriminal");
+		}
 		lapor.setImage("/" + uploadDir + fileName);
+		Date date = new Date();
+		lapor.setJam(String.valueOf(date.getHours())+":"+String.valueOf(date.getMinutes()));
 		laporanRepo.save(lapor);
 		return "Berhasil memasukan data";
 	}
