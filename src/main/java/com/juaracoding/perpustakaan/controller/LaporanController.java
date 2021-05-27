@@ -1,19 +1,20 @@
 package com.juaracoding.perpustakaan.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.tomcat.util.json.JSONParser;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,12 +34,11 @@ public class LaporanController {
 		return laporanRepo.findAll();
 	}
 	
-	@SuppressWarnings("deprecation")
 	@PostMapping("/")
 	public String addLaporan (@RequestParam(value="file")MultipartFile images, @ModelAttribute(value="data") String dataJson) throws IOException {
 		String fileName = StringUtils.cleanPath(images.getOriginalFilename());
 		
-		String uploadDir = "user-photo/";
+		String uploadDir = "src/main/java/user-photo/";
 		FileUtility.saveFile(uploadDir, fileName, images);
 		Laporan lapor = new Gson().fromJson(dataJson, Laporan.class);
 		
@@ -47,10 +47,16 @@ public class LaporanController {
 		}else {
 			lapor.setStatus("kriminal");
 		}
-		lapor.setImage("/" + uploadDir + fileName);
+		lapor.setImage(fileName);
 		Date date = new Date();
 		lapor.setJam(String.valueOf(date.getHours())+":"+String.valueOf(date.getMinutes()));
 		laporanRepo.save(lapor);
 		return "Berhasil memasukan data";
+	}
+	
+	@GetMapping(value = "/image/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
+	public @ResponseBody byte[] getImageWithMediaType(@PathVariable String name) throws IOException {
+	   final InputStream in = getClass().getResourceAsStream("/user-photo/"+name);
+	   return IOUtils.toByteArray(in);
 	}
 }
